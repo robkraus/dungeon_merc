@@ -1,0 +1,42 @@
+
+Dungeon Merc - Game Concept Sketch
+
+Tagline:
+"Delve deep. Get paid. Don’t die."
+
+Theme:
+You’re a contracted gun-for-hire sent into procedurally unstable underground facilities—ruins, labs, crypts, bunkers—to recover data, secure tech, or eliminate threats. Every run pays you XP and currency to upgrade your gear. The deeper you go, the riskier it gets.
+
+Gameplay Loop:
+1. Choose Contract (difficulty sets rewards, dungeon size, enemy types)
+2. Loadout Selection (weapons, items, perks)
+3. Enter the Dungeon (map generation, enemy spawn, hazards)
+4. Combat / Loot / Objectives (shoot, survive, extract)
+5. Extract or Die (success = rewards; death = lost loot or partial XP)
+6. Return to Base (buy new gear, level up, unlock perks)
+
+Core Mechanics:
+- Movement: WASD, dash/roll
+- Combat: Top-down aim + shoot (ranged + melee)
+- Enemies: Simple AI: patrol, chase, ranged attack
+- Loot: Ammo, credits, medkits, weapon mods
+- XP System: Earn for kills, loot, survival
+- Leveling: Gain perks (reload speed, extra HP, thermal vision, etc.)
+
+Sample Classes:
+Scout      - Fast, sneaky, light weapons        - Faster movement, silent steps
+Enforcer   - Tanky, shotgun/melee               - Extra armor, knockback resistance
+Tech       - Uses gadgets/hacks                 - Can disable traps, hack terminals
+Ghost      - Stealth melee / cloak              - Short invisibility, backstab bonus
+
+Dungeon Elements:
+- Map Types: Ruined labs, haunted bunkers, alien mines
+- Hazards: Gas leaks, electrified floors, locked doors
+- Mini Objectives: Find keycards, destroy server racks, free prisoners
+- Enemies: Mutated guards, rogue drones, cult soldiers
+
+Unique Hooks to Explore Later:
+- Offline badge sync: XP or loot unlocked from real-world tasks
+- Faction loyalty: Choose clients who give gear in exchange for loyalty
+- Async PvP: Raid other players’ past dungeon runs (via ghost data)
+- Contract board: Randomized missions tied to difficulty + modifiers
