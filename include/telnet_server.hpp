@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.hpp"
-#include <libssh2.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -16,10 +15,10 @@ namespace dungeon_merc {
 
 // Forward declarations
 class Player;
-class SSHConnection;
+class TelnetConnection;
 
-// SSH connection state
-enum class SSHConnectionState {
+// Telnet connection state
+enum class TelnetConnectionState {
     CONNECTING,
     AUTHENTICATING,
     AUTHENTICATED,
@@ -27,20 +26,11 @@ enum class SSHConnectionState {
     DISCONNECTED
 };
 
-// SSH authentication result
-enum class SSHAuthResult {
-    SUCCESS,
-    INVALID_USERNAME,
-    INVALID_PASSWORD,
-    AUTH_ERROR,
-    CONNECTION_ERROR
-};
-
-// SSH connection class
-class SSHConnection {
+// Telnet connection class
+class TelnetConnection {
 public:
-    SSHConnection(int socket_fd, const std::string& client_ip);
-    ~SSHConnection();
+    TelnetConnection(int socket_fd, const std::string& client_ip);
+    ~TelnetConnection();
 
     // Connection management
     bool initialize();
@@ -48,7 +38,7 @@ public:
     bool is_connected() const;
 
     // Authentication
-    SSHAuthResult authenticate(const std::string& username, const std::string& password);
+    bool authenticate(const std::string& username, const std::string& password);
     bool is_authenticated() const;
 
     // I/O operations
@@ -64,7 +54,7 @@ public:
     int get_socket_fd() const { return socket_fd_; }
     const std::string& get_client_ip() const { return client_ip_; }
     const std::string& get_username() const { return username_; }
-    SSHConnectionState get_state() const { return state_; }
+    TelnetConnectionState get_state() const { return state_; }
 
     // Event callbacks
     using MessageCallback = std::function<void(const std::string&)>;
@@ -74,11 +64,7 @@ private:
     int socket_fd_;
     std::string client_ip_;
     std::string username_;
-    SSHConnectionState state_;
-
-    // libssh2 session
-    LIBSSH2_SESSION* session_;
-    LIBSSH2_CHANNEL* channel_;
+    TelnetConnectionState state_;
 
     // Player association
     std::shared_ptr<Player> player_;
@@ -90,17 +76,14 @@ private:
     std::vector<char> receive_buffer_;
 
     // Helper methods
-    bool setup_ssh_session();
-    bool create_channel();
-    void cleanup_ssh();
     bool set_nonblocking();
 };
 
-// SSH server class
-class SSHServer {
+// Telnet server class
+class TelnetServer {
 public:
-    SSHServer(int port = DEFAULT_PORT);
-    ~SSHServer();
+    TelnetServer(int port = 4000);
+    ~TelnetServer();
 
     // Server management
     bool initialize();
@@ -118,15 +101,15 @@ public:
     bool validate_credentials(const std::string& username, const std::string& password);
 
     // Event callbacks
-    using ConnectionCallback = std::function<void(std::shared_ptr<SSHConnection>)>;
-    using DisconnectionCallback = std::function<void(std::shared_ptr<SSHConnection>)>;
+    using ConnectionCallback = std::function<void(std::shared_ptr<TelnetConnection>)>;
+    using DisconnectionCallback = std::function<void(std::shared_ptr<TelnetConnection>)>;
 
     void set_connection_callback(ConnectionCallback callback) { connection_callback_ = callback; }
     void set_disconnection_callback(DisconnectionCallback callback) { disconnection_callback_ = callback; }
 
     // Getters
     int get_port() const { return port_; }
-    const std::vector<std::shared_ptr<SSHConnection>>& get_connections() const { return connections_; }
+    const std::vector<std::shared_ptr<TelnetConnection>>& get_connections() const { return connections_; }
     size_t get_connection_count() const { return connections_.size(); }
 
 private:
@@ -135,7 +118,7 @@ private:
     bool running_;
 
     // Active connections
-    std::vector<std::shared_ptr<SSHConnection>> connections_;
+    std::vector<std::shared_ptr<TelnetConnection>> connections_;
 
     // User database (simple in-memory for now)
     std::unordered_map<std::string, std::string> users_; // username -> password_hash
@@ -154,21 +137,5 @@ private:
     mutable std::mutex connections_mutex_;
     mutable std::mutex users_mutex_;
 };
-
-// SSH utilities
-namespace ssh_utils {
-    // Password hashing
-    std::string hash_password(const std::string& password);
-    bool verify_password(const std::string& password, const std::string& hash);
-
-    // SSH key management
-    bool generate_server_key(const std::string& key_path);
-    bool load_server_key(const std::string& key_path);
-
-    // Network utilities
-    std::string get_client_ip(int socket_fd);
-    bool set_socket_nonblocking(int socket_fd);
-    bool set_socket_reuseaddr(int socket_fd);
-}
 
 } // namespace dungeon_merc

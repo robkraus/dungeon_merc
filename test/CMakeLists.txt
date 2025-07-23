@@ -23,7 +23,7 @@ if(GTest_FOUND)
 
     # Add tests
     add_test(NAME DungeonMercTests COMMAND dungeon_merc_tests)
-    
+
     message(STATUS "Google Test found - tests enabled")
 else()
     message(STATUS "Google Test not found - tests disabled")

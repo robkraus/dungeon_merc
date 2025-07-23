@@ -23,26 +23,15 @@ namespace dungeon_merc {
 
 // Forward declarations
 class Player;
-class Room;
-class Item;
-class Monster;
-class GameWorld;
 
 // Type definitions
 using PlayerId = uint32_t;
-using RoomId = uint32_t;
-using ItemId = uint32_t;
-using MonsterId = uint32_t;
 using Timestamp = std::chrono::system_clock::time_point;
 
 // Constants
-constexpr int DEFAULT_PORT = 22;  // SSH default port
+constexpr int DEFAULT_PORT = 4000;  // Telnet default port
 constexpr int MAX_PLAYERS = 100;
-constexpr int MAX_ROOM_SIZE = 100;
-constexpr int MAX_INVENTORY_SIZE = 50;
 constexpr int DEFAULT_HEALTH = 100;
-constexpr int DEFAULT_MANA = 50;
-constexpr int SSH_BUFFER_SIZE = 4096;
 constexpr int MAX_USERNAME_LENGTH = 32;
 constexpr int MAX_PASSWORD_LENGTH = 128;
 
@@ -63,20 +52,7 @@ enum class CharacterClass {
     GHOST
 };
 
-enum class ItemType {
-    WEAPON,
-    ARMOR,
-    CONSUMABLE,
-    KEY,
-    TREASURE
-};
 
-enum class MonsterType {
-    GUARD,
-    DRONE,
-    CULTIST,
-    ALIEN
-};
 
 enum class GameState {
     LOBBY,

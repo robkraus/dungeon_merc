@@ -7,9 +7,7 @@
 
 namespace dungeon_merc {
 
-// Forward declarations
-class Item;
-class Room;
+
 
 // Player class
 class Player {
@@ -34,14 +32,7 @@ public:
     void gain_experience(int amount);
     void level_up();
 
-    // Position and movement
-    void set_current_room(std::shared_ptr<Room> room);
-    std::shared_ptr<Room> get_current_room() const;
 
-    // Inventory management
-    void add_item(std::shared_ptr<Item> item);
-    void remove_item(std::shared_ptr<Item> item);
-    const std::vector<std::shared_ptr<Item>>& get_inventory() const;
 
     // Game state
     GameState get_game_state() const { return game_state_; }
@@ -60,8 +51,7 @@ private:
     int experience_;
     int experience_to_next_level_;
 
-    std::shared_ptr<Room> current_room_;
-    std::vector<std::shared_ptr<Item>> inventory_;
+
 
     GameState game_state_;
     Timestamp last_login_;

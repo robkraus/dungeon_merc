@@ -1,6 +1,4 @@
 #include "player.hpp"
-#include "room.hpp"
-#include "item.hpp"
 
 namespace dungeon_merc {
 
@@ -89,35 +87,7 @@ void Player::level_up() {
     LOG_INFO("Player " + name_ + " reached level " + std::to_string(level_) + "!");
 }
 
-void Player::set_current_room(std::shared_ptr<Room> room) {
-    current_room_ = room;
-}
 
-std::shared_ptr<Room> Player::get_current_room() const {
-    return current_room_;
-}
-
-void Player::add_item(std::shared_ptr<Item> item) {
-    if (inventory_.size() >= MAX_INVENTORY_SIZE) {
-        LOG_WARNING("Player " + name_ + " inventory is full!");
-        return;
-    }
-
-    inventory_.push_back(item);
-    LOG_INFO("Player " + name_ + " picked up item: " + item->get_name());
-}
-
-void Player::remove_item(std::shared_ptr<Item> item) {
-    auto it = std::find(inventory_.begin(), inventory_.end(), item);
-    if (it != inventory_.end()) {
-        inventory_.erase(it);
-        LOG_INFO("Player " + name_ + " dropped item: " + item->get_name());
-    }
-}
-
-const std::vector<std::shared_ptr<Item>>& Player::get_inventory() const {
-    return inventory_;
-}
 
 void Player::calculate_experience_to_next_level() {
     // Simple exponential experience curve
