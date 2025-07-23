@@ -1,7 +1,10 @@
 #include "common.hpp"
+#include "ssh_server.hpp"
+#include "player.hpp"
 #include <iostream>
 #include <csignal>
 #include <cstdlib>
+#include <memory>
 
 using namespace dungeon_merc;
 
@@ -16,7 +19,7 @@ void signal_handler(int signal) {
 
 // Function to print usage information
 void print_usage(const char* program_name) {
-    std::cout << "Dungeon Merc - Telnet MUD Server\n";
+    std::cout << "Dungeon Merc - SSH MUD Server\n";
     std::cout << "Usage: " << program_name << " [OPTIONS]\n\n";
     std::cout << "Options:\n";
     std::cout << "  -p, --port PORT        Server port (default: " << DEFAULT_PORT << ")\n";
@@ -26,13 +29,13 @@ void print_usage(const char* program_name) {
     std::cout << "  -h, --help             Show this help message\n\n";
     std::cout << "Examples:\n";
     std::cout << "  " << program_name << "                    # Start with default settings\n";
-    std::cout << "  " << program_name << " --port 4001        # Start on port 4001\n";
+    std::cout << "  " << program_name << " --port 2222        # Start on port 2222\n";
     std::cout << "  " << program_name << " --debug            # Start in debug mode\n";
 }
 
 // Function to print version information
 void print_version() {
-    std::cout << "Dungeon Merc Telnet MUD Server v1.0.0\n";
+    std::cout << "Dungeon Merc SSH MUD Server v1.0.0\n";
     std::cout << "Copyright (c) 2024 Dungeon Merc Project\n";
     std::cout << "License: MIT\n";
 }
@@ -97,32 +100,43 @@ ServerConfig parse_arguments(int argc, char* argv[]) {
 // Main server initialization and run function
 int run_server(const ServerConfig& config) {
     try {
-        LOG_INFO("Starting Dungeon Merc Telnet MUD Server");
+        LOG_INFO("Starting Dungeon Merc SSH MUD Server");
         LOG_INFO("Port: " + std::to_string(config.port));
         LOG_INFO("Max Players: " + std::to_string(config.max_players));
         LOG_INFO("Debug Mode: " + std::string(config.debug_mode ? "Enabled" : "Disabled"));
 
-        // TODO: Initialize game world
-        // TODO: Initialize telnet server
-        // TODO: Start game loop
+        // Initialize SSH server
+        auto ssh_server = std::make_unique<SSHServer>(config.port);
+        
+        // Add some test users
+        ssh_server->add_user("admin", ssh_utils::hash_password("admin123"));
+        ssh_server->add_user("player1", ssh_utils::hash_password("password123"));
+        ssh_server->add_user("test", ssh_utils::hash_password("test123"));
+        
+        if (!ssh_server->initialize()) {
+            LOG_ERROR("Failed to initialize SSH server");
+            return 1;
+        }
 
-        LOG_INFO("Server initialized successfully");
+        LOG_INFO("SSH Server initialized successfully");
 
         // Main server loop
         while (!g_shutdown_requested) {
-            // TODO: Process incoming connections
-            // TODO: Update game world
-            // TODO: Handle player commands
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            // Accept new connections
+            ssh_server->accept_connections();
+            
+            // Process existing connections
+            ssh_server->process_connections();
+            
+            // Clean up disconnected connections
+            ssh_server->remove_disconnected_connections();
+            
+            // Small delay to prevent busy waiting
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
 
         LOG_INFO("Shutting down server...");
-
-        // TODO: Cleanup resources
-        // TODO: Save game state
-        // TODO: Close connections
-
+        ssh_server->shutdown();
         LOG_INFO("Server shutdown complete");
         return 0;
 

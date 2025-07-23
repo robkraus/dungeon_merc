@@ -1,17 +1,18 @@
-# Dungeon Merc - Telnet MUD Server
+# Dungeon Merc - SSH MUD Server
 
-A console-based Multi-User Dungeon (MUD) server inspired by the Dungeon Merc concept - a game where players are contracted mercenaries delving into procedurally generated underground facilities.
+A secure console-based Multi-User Dungeon (MUD) server inspired by the Dungeon Merc concept - a game where players are contracted mercenaries delving into procedurally generated underground facilities.
 
 ## Tagline
 "Delve deep. Get paid. Don't die."
 
 ## Overview
 
-Dungeon Merc is a telnet-based MUD server where players take on the role of contracted mercenaries sent into unstable underground facilities to recover data, secure technology, or eliminate threats. Each run provides XP and currency for gear upgrades, with increasing risk as you go deeper.
+Dungeon Merc is an SSH-based MUD server where players take on the role of contracted mercenaries sent into unstable underground facilities to recover data, secure technology, or eliminate threats. Each run provides XP and currency for gear upgrades, with increasing risk as you go deeper.
 
 ## Features
 
-- **Telnet Server**: Multi-user telnet interface for connecting players
+- **SSH Server**: Secure multi-user SSH interface for connecting players
+- **Authentication**: Username/password authentication with encrypted connections
 - **Procedural Dungeons**: Dynamically generated underground facilities
 - **Character Classes**: Scout, Enforcer, Tech, and Ghost with unique abilities
 - **Combat System**: Turn-based combat with ranged and melee options
@@ -50,11 +51,11 @@ make
 
 ### Running the Server
 ```bash
-# Default port 4000
+# Default port 22 (SSH)
 ./bin/dungeon_merc
 
 # Custom port
-./bin/dungeon_merc --port 4001
+./bin/dungeon_merc --port 2222
 
 # Debug mode
 ./bin/dungeon_merc --debug
@@ -62,16 +63,18 @@ make
 
 ## Connecting to the Server
 
-Use any telnet client to connect:
+Use any SSH client to connect:
 ```bash
-telnet localhost 4000
+ssh localhost
+# or
+ssh -p 2222 localhost
 ```
 
-Or use a MUD client like:
-- MUSHclient
-- zMUD
-- Mudlet
-- TinTin++
+Or use a terminal-based SSH client:
+- OpenSSH (built-in on most systems)
+- PuTTY (Windows)
+- iTerm2 (macOS)
+- Any SSH-compatible terminal
 
 ## Project Structure
 
@@ -167,7 +170,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Roadmap
 
-- [ ] Basic telnet server implementation
+- [x] Basic SSH server implementation
 - [ ] Character creation and persistence
 - [ ] Procedural dungeon generation
 - [ ] Combat system
