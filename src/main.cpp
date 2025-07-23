@@ -107,12 +107,12 @@ int run_server(const ServerConfig& config) {
 
         // Initialize SSH server
         auto ssh_server = std::make_unique<SSHServer>(config.port);
-        
+
         // Add some test users
         ssh_server->add_user("admin", ssh_utils::hash_password("admin123"));
         ssh_server->add_user("player1", ssh_utils::hash_password("password123"));
         ssh_server->add_user("test", ssh_utils::hash_password("test123"));
-        
+
         if (!ssh_server->initialize()) {
             LOG_ERROR("Failed to initialize SSH server");
             return 1;
@@ -124,13 +124,13 @@ int run_server(const ServerConfig& config) {
         while (!g_shutdown_requested) {
             // Accept new connections
             ssh_server->accept_connections();
-            
+
             // Process existing connections
             ssh_server->process_connections();
-            
+
             // Clean up disconnected connections
             ssh_server->remove_disconnected_connections();
-            
+
             // Small delay to prevent busy waiting
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }

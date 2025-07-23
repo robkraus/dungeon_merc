@@ -16,7 +16,7 @@ public:
     const std::string& get_name() const { return name_; }
     ItemType get_type() const { return type_; }
     int get_value() const { return value_; }
-    
+
     // Item actions
     virtual bool use(std::shared_ptr<Player> player);
     virtual std::string get_description() const;
@@ -28,4 +28,4 @@ private:
     int value_;
 };
 
-} // namespace dungeon_merc 
+} // namespace dungeon_merc
