@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "game_world.hpp"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -90,6 +91,10 @@ public:
     void shutdown();
     bool is_running() const;
 
+    // Game world integration
+    void set_game_world(std::shared_ptr<GameWorld> game_world);
+    std::shared_ptr<GameWorld> get_game_world() const;
+
     // Connection handling
     void accept_connections();
     void process_connections();
@@ -122,6 +127,9 @@ private:
 
     // User database (simple in-memory for now)
     std::unordered_map<std::string, std::string> users_; // username -> password_hash
+
+    // Game world
+    std::shared_ptr<GameWorld> game_world_;
 
     // Callbacks
     ConnectionCallback connection_callback_;

@@ -234,4 +234,16 @@ inline std::string to_upper(const std::string& str) {
     return result;
 }
 
+inline bool is_valid_direction(const std::string& str) {
+    std::string lower = str;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+    return (lower == "north" || lower == "n" ||
+            lower == "south" || lower == "s" ||
+            lower == "east" || lower == "e" ||
+            lower == "west" || lower == "w" ||
+            lower == "up" || lower == "u" ||
+            lower == "down" || lower == "d");
+}
+
 } // namespace dungeon_merc

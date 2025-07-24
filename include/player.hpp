@@ -38,6 +38,10 @@ public:
     GameState get_game_state() const { return game_state_; }
     void set_game_state(GameState state) { game_state_ = state; }
 
+    // Room management
+    int get_current_room_id() const { return current_room_id_; }
+    void set_current_room_id(int room_id) { current_room_id_ = room_id; }
+
     // Timestamps
     Timestamp get_last_login() const { return last_login_; }
     void update_last_login() { last_login_ = std::chrono::system_clock::now(); }
@@ -54,6 +58,7 @@ private:
 
 
     GameState game_state_;
+    int current_room_id_;
     Timestamp last_login_;
 
     // Helper methods

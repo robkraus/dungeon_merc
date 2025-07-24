@@ -11,6 +11,7 @@ Player::Player(const std::string& name, CharacterClass character_class)
     , experience_(0)
     , experience_to_next_level_(100)
     , game_state_(GameState::LOBBY)
+    , current_room_id_(1)
     , last_login_(std::chrono::system_clock::now()) {
 
     // Set character class specific stats

@@ -1,6 +1,7 @@
 #include "common.hpp"
 #include "telnet_server.hpp"
 #include "player.hpp"
+#include "game_world.hpp"
 #include <iostream>
 #include <csignal>
 #include <cstdlib>
@@ -105,6 +106,10 @@ int run_server(const ServerConfig& config) {
         LOG_INFO("Max Players: " + std::to_string(config.max_players));
         LOG_INFO("Debug Mode: " + std::string(config.debug_mode ? "Enabled" : "Disabled"));
 
+        // Initialize game world
+        auto game_world = std::make_shared<GameWorld>();
+        LOG_INFO("Game world initialized");
+
         // Initialize telnet server
         auto telnet_server = std::make_unique<TelnetServer>(config.port);
 
@@ -112,6 +117,9 @@ int run_server(const ServerConfig& config) {
             LOG_ERROR("Failed to initialize telnet server");
             return 1;
         }
+
+        // Connect game world to telnet server
+        telnet_server->set_game_world(game_world);
 
         LOG_INFO("Telnet Server initialized successfully");
 

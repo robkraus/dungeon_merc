@@ -1,5 +1,6 @@
 #include "telnet_server.hpp"
 #include "player.hpp"
+#include "game_world.hpp"
 #include <iostream>
 #include <cstring>
 #include <openssl/evp.h>
@@ -218,6 +219,15 @@ void TelnetServer::accept_connections() {
 
         auto connection = std::make_shared<TelnetConnection>(client_socket, client_ip);
         if (connection->initialize()) {
+            // Create a player for this connection
+            auto player = std::make_shared<Player>("Player_" + std::to_string(client_socket), CharacterClass::SCOUT);
+            connection->set_player(player);
+
+            // Add player to game world
+            if (game_world_) {
+                game_world_->add_player(player);
+            }
+
             std::lock_guard<std::mutex> lock(connections_mutex_);
             connections_.push_back(connection);
 
@@ -266,6 +276,9 @@ void TelnetServer::process_connections() {
                 LOG_DEBUG("Sending help response");
                 connection->send_message("Available commands:");
                 connection->send_message("  help - Show this help");
+                connection->send_message("  look - Look around the current room");
+                connection->send_message("  north/south/east/west/up/down - Move in that direction");
+                connection->send_message("  players - Show players in current room");
                 connection->send_message("  quit - Disconnect from server");
                 connection->send_message("  status - Show your status");
                 connection->send_message("> "); // Add prompt
@@ -277,6 +290,33 @@ void TelnetServer::process_connections() {
                 LOG_DEBUG("Sending status response");
                 connection->send_message("You are connected to Dungeon Merc!");
                 connection->send_message("Game features coming soon...");
+                connection->send_message("> "); // Add prompt
+            } else if (message == "look") {
+                LOG_DEBUG("User requested look");
+                if (game_world_ && connection->get_player()) {
+                    std::string room_desc = game_world_->handle_look_command(connection->get_player());
+                    connection->send_message(room_desc);
+                } else {
+                    connection->send_message("You are lost in the void...");
+                }
+                connection->send_message("> "); // Add prompt
+            } else if (message == "players") {
+                LOG_DEBUG("User requested players list");
+                if (game_world_ && connection->get_player()) {
+                    std::string players_list = game_world_->handle_players_command(connection->get_player());
+                    connection->send_message(players_list);
+                } else {
+                    connection->send_message("You are alone.");
+                }
+                connection->send_message("> "); // Add prompt
+            } else if (is_valid_direction(message)) {
+                LOG_DEBUG("User requested movement: " + message);
+                if (game_world_ && connection->get_player()) {
+                    std::string move_result = game_world_->handle_move_command(connection->get_player(), message);
+                    connection->send_message(move_result);
+                } else {
+                    connection->send_message("You can't move right now.");
+                }
                 connection->send_message("> "); // Add prompt
             } else {
                 LOG_DEBUG("Unknown command: " + message);
@@ -322,6 +362,14 @@ bool TelnetServer::remove_user(const std::string& username) {
         return true;
     }
     return false;
+}
+
+void TelnetServer::set_game_world(std::shared_ptr<GameWorld> game_world) {
+    game_world_ = game_world;
+}
+
+std::shared_ptr<GameWorld> TelnetServer::get_game_world() const {
+    return game_world_;
 }
 
 bool TelnetServer::validate_credentials(const std::string& username, const std::string& password) {
